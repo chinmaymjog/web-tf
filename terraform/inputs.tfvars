@@ -1,0 +1,23 @@
+project          = "star"
+p_short          = "str"
+env              = "Production"
+e_short          = "prd"
+location         = "centralindia"
+l_short          = "inc"
+vnet_space       = ["10.0.0.0/24"]
+snet_web         = ["10.0.0.0/26"]
+snet_db          = ["10.0.0.64/26"]
+bastion_size     = "Standard_B2s"
+bastion_osdisk   = 64
+bastion_datadisk = 64
+webvm_size       = "Standard_B2s"
+webvm_count      = "2"
+wbbvm_osdisk     = 64
+wbbvm_datadisk   = 64
+vm_user          = "azureuser"
+dbsku            = "GP_Standard_D2ads_v5"
+dbsize           = 20
+dbadmin          = "psqladmin"
+dbpass           = "H@Sh1CoR3!"
+ip_allow         = ["152.58.17.126"]
+

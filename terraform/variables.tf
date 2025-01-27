@@ -34,10 +34,6 @@ variable "snet_db" {
   description = "Address space for db subnet"
 }
 
-# variable "snet_bastion" {
-#   description = "Address space for bastion subnet"
-# }
-
 variable "webvm_size" {
   description = "Size for VM"
 }
@@ -50,8 +46,20 @@ variable "vm_user" {
   description = "Username for vm user"
 }
 
-variable "data_disk_size_gb" {
+variable "bastion_osdisk" {
+  description = "Os disk size for VM in GB"
+}
+
+variable "bastion_datadisk" {
   description = "Data disk size for VM in GB"
+}
+
+variable "wbbvm_osdisk" {
+  description = "OS disk size for Web VM in GB"
+}
+
+variable "wbbvm_datadisk" {
+  description = "Data disk size for Web VM in GB"
 }
 
 variable "dbsku" {

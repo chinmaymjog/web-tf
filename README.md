@@ -1,6 +1,6 @@
 # Shared Hosting Platform on Azure
 
-![image](../images/post_img.jpg)
+![image](./docs/images/net_diag.png)
 
 I've had the exciting opportunity to design and build a shared hosting platform on Azure.
 The base requirement was to host websites built on a PHP CMS (e.g., WordPress) on a LAMP (Linux, Apache, MySQL, PHP) stack, while supporting multiple PHP versions.

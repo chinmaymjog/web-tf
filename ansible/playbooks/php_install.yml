@@ -1,0 +1,59 @@
+---
+- name: Install PHP-FPM
+  become: true
+  hosts: all
+  tasks:
+  - name: Split PHP version string
+    set_fact:
+      php_name: "{{ php_version | regex_replace('([a-zA-Z]+)([0-9.]+)', '\\1') }}"
+      php_number: "{{ php_version | regex_replace('([a-zA-Z]+)([0-9.]+)', '\\2') }}"
+
+  - name: Installing PHP-FPM & required modules
+    ansible.builtin.apt:
+      name:
+        - "{{ php_version }}"
+        - "{{ php_version }}-ctype"
+        - "{{ php_version }}-curl"
+        - "{{ php_version }}-gd"
+        - "{{ php_version }}-iconv"
+        - "{{ php_version }}-xml"
+        - "{{ php_version }}-mbstring"
+        - "{{ php_version }}-posix"
+        - "{{ php_version }}-xml"
+        - "{{ php_version }}-zip"
+        - "{{ php_version }}-pdo"
+        - "{{ php_version }}-mysqlnd"
+        - "{{ php_version }}-intl"
+        - "{{ php_version }}-bcmath"
+        - "{{ php_version }}-gmp"
+        - "{{ php_version }}-fpm"
+        - "{{ php_version }}-imagick"
+        - "{{ php_version }}-rdkafka"
+        - "{{ php_version }}-soap"
+      state: latest
+
+  - name: Creating {{ php_version }} multisite service
+    ansible.builtin.shell: |
+      cp /lib/systemd/system/{{ php_version }}-fpm.service /lib/systemd/system/{{ php_version }}-fpm@.service
+
+  - name: Configuring {{ php_version }} multisite service
+    ansible.builtin.lineinfile:
+      path: /lib/systemd/system/{{ php_version }}-fpm@.service
+      regex: '^ExecStart='
+      line: ExecStart=/usr/sbin/php-fpm{{ php_number }} --nodaemonize --fpm-config /etc/php/{{ php_number }}/fpm/pool.d/%i.conf
+
+  - name: Configuring {{ php_version }} multisite service
+    ansible.builtin.lineinfile:
+      path: /lib/systemd/system/{{ php_version }}-fpm@.service
+      regex: '^ExecStartPost='
+      state: absent
+
+  - name: Configuring {{ php_version }} multisite service
+    ansible.builtin.lineinfile:
+      path: /lib/systemd/system/{{ php_version }}-fpm@.service
+      regex: '^ExecStopPost='
+      state: absent
+
+  - name: Reload systemctl
+    ansible.builtin.systemd:
+      daemon_reload: true

@@ -1,0 +1,91 @@
+---
+- name: Configure newly added webserver
+  become: true
+  hosts: all
+  tasks:
+  - name: Update all packages
+    ansible.builtin.apt:
+      name: "*"
+      state: latest
+
+  - name: Install basic packages
+    ansible.builtin.apt:
+      name:
+      - vim 
+      - zip 
+      - unzip 
+      - wget 
+      - curl 
+      - libcurl4 
+      - libxml2 
+      - libssh2-1 
+      - openssl 
+      - apache2  
+      - libapache2-mod-security2
+      - libapache2-mod-fcgid 
+      - imagemagick
+      - language-pack-en
+      - locales
+      - python3-passlib
+      state: latest
+  
+  - name: Enable necessary Apache2 modules
+    ansible.builtin.shell: a2enmod rewrite ssl security2 fcgid proxy_http proxy_fcgi
+
+  - name: Settting apache2 directories
+    ansible.builtin.file:
+      path: /etc/apache2/{{ item }}
+      state: directory
+    loop:
+      - auth-available
+      - auth-enabled
+      - auth-files
+    
+  - name: Settting apache2 IncludeOptional
+    ansible.builtin.lineinfile:
+      path: /etc/apache2/apache2.conf
+      line: IncludeOptional {{ item }}/*.conf
+    loop:
+      - auth-enabled
+
+  - name: Setting up web_users group
+    ansible.builtin.group:
+      name: web_users
+      state: present
+  
+  - name: Adding www-data to web_users group
+    ansible.builtin.user:
+      name: www-data
+      groups: web_users
+      append: true
+
+  - name: Setting GID on /websites directory
+    ansible.builtin.file:
+      path: /websites
+      group: web_users
+      mode: u=rwx,g=rwx,o=rx,g+s
+      recurse: true
+  
+  - name: Adding default index package
+    ansible.builtin.copy:
+      src: templates/index.html
+      dest: /var/www/html/index.html
+
+  - name: Adding default apache2 conf
+    ansible.builtin.copy:
+      src: templates/00-default-vhost.conf
+      dest: /etc/apache2/sites-enabled/00-default-vhost.conf
+      
+  - name: Starting apache2 service
+    ansible.builtin.systemd:
+      name: apache2
+      enabled: true
+      state: started
+
+  - name: Add the main PPA for supported PHP versions
+    ansible.builtin.apt_repository:
+      repo: ppa:ondrej/php
+
+  - name: Add PPA for Apache 2.x
+    ansible.builtin.apt_repository:
+      repo: ppa:ondrej/apache2

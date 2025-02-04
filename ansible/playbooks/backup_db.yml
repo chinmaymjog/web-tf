@@ -1,0 +1,22 @@
+- hosts: localhost
+  vars_files:
+    - var_files/{{ env }}_db.yml
+  tasks:
+    - name: Create Directories for Backups
+      file:
+        path: /{{ db_dir }}/{{ ansible_date_time.date }}
+        state: directory
+        mode: '0700'
+
+    - name: find db
+      shell: mysql -h {{ db_host }} -u {{ db_user }} -p"{{ db_pass }}" -e "SHOW DATABASES;"|grep -Ev "(Database|information_schema|performance_schema|sys|mysql)"
+      register: my_dbs
+
+    - name: print
+      debug:
+       msg: "{{my_dbs.stdout_lines}}"
+
+    - name: Take Backup
+      shell: mysqldump --force --opt --skip-lock-tables -h {{ db_host }} -u {{ db_user }}  -p"{{ db_pass }}" --databases {{item}}| gzip > /{{ db_dir }}/{{ ansible_date_time.date }}/{{item}}.sql.gz
+      with_items:
+          - "{{my_dbs.stdout_lines}}"

@@ -1,0 +1,16 @@
+[$user]
+user = {{ site_user }}
+group = {{ site_group }}
+listen = {{ phpfpmsock }}/{{ site_user }}.sock
+listen.acl_users = www-data
+listen.allowed_clients = 127.0.0.1
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+catch_workers_output = yes
+slowlog = {{ doc_root }}/{{ site_user }}/php-fpm-logs/{{ site_user }}-slow.log
+php_admin_value[error_log] = {{ doc_root }}/{{ site_user }}/php-fpm-logs/{{ site_user }}-error.log
+php_admin_flag[log_errors] = on
+php_admin_value[session.save_path] = {{ doc_root }}/{{ site_user }}/sessions

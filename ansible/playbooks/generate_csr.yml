@@ -1,0 +1,51 @@
+---
+- name: Generate CSR for site
+  become: true
+  hosts: localhost
+  tasks:
+
+  - name: Create directory structure if doesnt exist 
+    ansible.builtin.file:
+     path: /home/c4eadmin/csr/{{ commonName }}
+     state: directory  
+
+  - name: Get timestamp from the system
+    shell: "date +%Y-%m-%d%H-%M-%S"
+    register: tstamp
+
+  - name: Set variables
+    set_fact:
+     cur_date: "{{ tstamp.stdout[0:10]}}"
+
+  - name: Generate an OpenSSL private key with the default values (4096 bits, RSA)
+    community.crypto.openssl_privatekey:
+      path: /home/c4eadmin/csr/{{ commonName }}/{{ commonName }}_{{ cur_date }}.key.pem
+  
+  - name: Generate an OpenSSL Certificate Signing Request without subjectAltName extension
+    community.crypto.openssl_csr:
+      path: /home/c4eadmin/csr/{{ commonName }}/{{ commonName }}_{{ cur_date }}.csr
+      privatekey_path: /home/c4eadmin/csr/{{ commonName }}/{{ commonName }}_{{ cur_date }}.key.pem
+      commonName: "{{ commonName }}"
+      countryName: "{{ countryName }}"
+      localityName: "{{ localityName }}"
+      stateOrProvinceName: "{{ stateOrProvinceName }}"
+      organizationName: "{{ organizationName }}"
+      organizationalUnitName: "{{ organizationalUnitName }}"
+      emailAddress: "{{ emailAddress }}"
+    when: subjectAltName == ""
+
+  - name: Generate an OpenSSL Certificate Signing Request with subjectAltName extension
+    community.crypto.openssl_csr:
+      path: /home/c4eadmin/csr/{{ commonName }}/{{ commonName }}_{{ cur_date }}.csr
+      privatekey_path: /home/c4eadmin/csr/{{ commonName }}/{{ commonName }}_{{ cur_date }}_key.pem
+      commonName: "{{ commonName }}"
+      countryName: "{{ countryName }}"
+      localityName: "{{ localityName }}"
+      stateOrProvinceName: "{{ stateOrProvinceName }}"
+      organizationName: "{{ organizationName }}"
+      organizationalUnitName: "{{ organizationalUnitName }}"
+      emailAddress: "{{ emailAddress }}"
+      subjectAltName: "{{ item.value | map('regex_replace', '^', 'DNS:') | list }}"
+    with_dict: 
+      dns: "{{ subjectAltName.splitlines() }}"
+    when: subjectAltName != ""

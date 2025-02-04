@@ -1,0 +1,126 @@
+---
+- name: Creating New HTML Site
+  become: true
+  hosts: "{{ env }}_webservers"
+  vars_files:
+    - var_files/web_vars.yml
+
+  tasks:
+  - name: Checking if config file exist in sites-available
+    ansible.builtin.stat:
+      path: "{{ apache2_conf }}/{{ site_url }}.conf"
+    register: sites_available
+    when:
+      - site_url != ""
+
+  - name: Progress
+    ansible.builtin.debug:
+      msg: 
+      - "{{ site_url }} already exist"
+      - "Other tasks will be skipped"
+    when: sites_available.stat.exists == True
+
+  - name: Building site username
+    delegate_to: localhost
+    delegate_facts: true
+    run_once: true
+    ansible.builtin.shell: |
+      rndm=$(( 1 + $RANDOM % 1000))
+      user=$(echo {{ site_url }} | tr -d [.,-] | sed -e s/indus//g | cut -c 1-10)_$rndm
+      echo $user
+    register: username
+    args:
+     executable: /bin/bash
+    when: sites_available.stat.exists == False
+
+  - name: Building site user password
+    delegate_to: localhost
+    delegate_facts: true
+    run_once: true
+    ansible.builtin.shell: |
+      pass=$(openssl rand -hex 12)
+      echo $pass
+    register: password
+    args:
+     executable: /bin/bash
+    when: sites_available.stat.exists == False
+
+  - name: Creating site user
+    vars:
+      site_user: "{{ username.stdout }}"
+      site_user_pass: "{{ password.stdout }}"
+    ansible.builtin.user:
+      name: "{{ site_user }}"
+      password: "{{ site_user_pass }}"
+      groups: web_users
+      create_home: false
+    when: sites_available.stat.exists == False
+
+  - name: Creating Document root directory
+    vars:
+      site_user: "{{ username.stdout }}"
+    ansible.builtin.file:
+      path: "{{ doc_root }}/{{ site_user }}/web"
+      state: directory
+      recurse: true
+      mode: "02775"
+      owner: "{{ site_user }}"
+      group: web_users
+    when: sites_available.stat.exists == False
+
+  - name: Creating logs directory
+    vars:
+      site_user: "{{ username.stdout }}"
+    ansible.builtin.file:
+      path: "{{ doc_root }}/{{ site_user }}/logs"
+      state: directory
+      recurse: true
+      mode: "02775"
+      owner: root
+      group: web_users
+    when: sites_available.stat.exists == False
+
+  - name: Adding default index page
+    vars:
+      site_user: "{{ username.stdout }}"
+    ansible.builtin.template:
+      src: ../templates/index.html
+      dest: "{{ doc_root }}/{{ site_user }}/web/index.html"
+      mode: "644"
+      owner: "{{ site_user }}"
+    when: sites_available.stat.exists == False
+
+  - name: Creating site VHOST config
+    vars:
+      site_user: "{{ username.stdout }}"
+    ansible.builtin.template:
+      src: ../templates/vhost_html.j2
+      dest: "{{ apache2_conf }}/{{ site_url }}.conf"
+      mode: "644"
+    when: sites_available.stat.exists == False
+
+  - name: Enable site
+    ansible.builtin.shell: a2ensite {{ site_url }}
+    when: sites_available.stat.exists == False
+
+  - name: Restart apache2
+    ansible.builtin.systemd:
+      name: apache2
+      state: restarted
+    when: sites_available.stat.exists == False
+
+  - name: Output
+    ansible.builtin.debug:
+      msg:
+      - "HTML site {{ site_url }} has been added successfully"
+    when: sites_available.stat.exists == False
+
+  - name: Local Output
+    delegate_to: localhost
+    delegate_facts: true
+    run_once: true
+    vars:
+      site_user: "{{ username.stdout }}"
+    ansible.builtin.shell: |
+      echo {{ site_url }}'\t'{{ site_user }} >> ~/site_index.txt
+    when: sites_available.stat.exists == False

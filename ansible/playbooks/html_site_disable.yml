@@ -1,0 +1,17 @@
+---
+- name: Disable HTML site
+  become: true
+  hosts: "{{ env }}_webservers"
+
+  tasks:
+  - name: Disable site
+    ansible.builtin.shell: a2dissite {{ site_url }}
+    when:
+      - site_url != ""
+
+  - name: Restart apache2
+    ansible.builtin.systemd:
+      name: apache2
+      state: restarted
+    when:
+      - site_url != ""

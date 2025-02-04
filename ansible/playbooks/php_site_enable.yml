@@ -1,0 +1,37 @@
+---
+- name: Enable PHP site
+  become: true
+  hosts: "{{ env }}_webservers"
+
+  tasks:
+  - name: Enable site
+    ansible.builtin.shell: a2ensite {{ site_url }}
+    when:
+      - site_url != ""
+
+  - name: Get site details
+    delegate_to: localhost
+    delegate_facts: true
+    run_once: true
+    ansible.builtin.shell: |
+      php_version=$(awk -F'\t' -v s={{ site_url }} '{if ($1==s) print $4}' ~/site_index.txt)      
+      echo $php_version
+    register: php_version
+    when:
+      - site_url != ""
+
+  - name: Start PHP-FPM service for {{ site_url }}
+    vars:
+      site_php_version: {{ php_version.stdout }}
+    ansible.builtin.systemd:
+      name: "{{ php_version }}-fpm@{{ site_url }}"
+      state: started
+    when:
+      - site_url != ""
+
+  - name: Restart apache2
+    ansible.builtin.systemd:
+      name: apache2
+      state: restarted
+    when:
+      - site_url != ""

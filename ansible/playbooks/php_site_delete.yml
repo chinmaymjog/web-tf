@@ -1,0 +1,158 @@
+---
+- name: Deleting PHP Site
+  become: true
+  hosts: "{{ env }}_webservers"
+  vars_files:
+  - var_files/web_vars.yml
+  - var_files/"{{ env }}"-db.yml
+
+  tasks:
+  - name: Split PHP version string
+    set_fact:
+      php_name: "{{ php_version | regex_replace('([a-zA-Z]+)([0-9.]+)', '\\1') }}"
+      php_number: "{{ php_version | regex_replace('([a-zA-Z]+)([0-9.]+)', '\\2') }}"
+
+  - name: Checking if config file exist in sites-available
+    ansible.builtin.stat:
+      path: "/etc/apache2/sites-available/{{ site_url }}.conf"
+    register: sites_available
+    when:
+      - site_url != ""
+      
+  - name: Checking if PHP config file exist
+    ansible.builtin.stat:
+      path: "/etc/php/{{ php_number }}/fpm/pool.d/{{ site_url }}.conf"
+    register: php_available
+
+  - name: Progress
+    ansible.builtin.debug:
+      msg: 
+      - "{{ site_url }} does not exist"
+      - "Other tasks will be skipped"
+    when: 
+      - sites_available.stat.exists == False
+      - php_available.stat.exists == False
+
+  - name: Stop PHP-FPM service for {{ site_url }}
+    ansible.builtin.systemd:
+      name: "{{ php_version }}-fpm@{{ site_url }}"
+      enabled: true
+      state: stopped
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+
+  - name: Disable site
+    ansible.builtin.shell: a2dissite {{ site_url }}
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+
+  - name: Deleting site VHOST config
+    ansible.builtin.file:
+      path: "{{ apache2_conf }}/{{ site_url }}.conf"
+      state: absent
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+
+  - name: Deleting php-fpm config
+    ansible.builtin.file:
+      path: "/etc/php/{{ php_number }}/fpm/pool.d/{{ site_url }}.conf"
+      state: absent
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+
+  - name: Set site auth user
+    delegate_to: localhost
+    delegate_facts: true
+    run_once: true
+    ansible.builtin.shell: |
+      user=$(awk -F'\t' -v s={{ site_url }} '{if ($1==s) print $2}' ~/site_index.txt)
+      echo $user
+    register: username
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+
+  - name: Deleting Document root directory
+    vars:
+      site_user: "{{ username.stdout }}"
+    ansible.builtin.file:
+      path: "{{ doc_root }}/{{ site_user }}"
+      state: absent
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+      - username.stdout != ""
+
+  - name: Deleting site user
+    vars:
+      site_user: "{{ username.stdout }}"
+    ansible.builtin.user:
+      name: "{{ site_user }}"
+      state: absent
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+      - username.stdout != ""
+
+  - name: Restart apache2
+    ansible.builtin.systemd:
+      name: apache2
+      state: restarted
+
+  - name: Deleting databse user
+    delegate_to: localhost
+    delegate_facts: true
+    run_once: true
+    community.mysql.mysql_user:
+      login_host: "{{ db_host }}"
+      login_port: "{{ db_port }}"
+      login_user: "{{ db_user }}"
+      login_password: "{{ db_pass }}"
+      name: "{{ username.stdout }}"
+      state: absent
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+      - username.stdout != ""
+
+  - name: Deleting database
+    delegate_to: localhost
+    delegate_facts: true
+    run_once: true
+    community.mysql.mysql_db:
+      login_host: "{{ db_host }}"
+      login_port: "{{ db_port }}"
+      login_user: "{{ db_user }}"
+      login_password: "{{ db_pass }}"
+      name: "{{ username.stdout }}"
+      state: absent
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+      - username.stdout != ""
+    
+  - name: Output
+    ansible.builtin.debug:
+      msg:
+      - "PHP site {{ site_url }} has been deleted successfully"
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+      - username.stdout != ""
+
+  - name: Local Output
+    delegate_to: localhost
+    delegate_facts: true
+    run_once: true
+    ansible.builtin.lineinfile: 
+      path: ~/site_index.txt
+      regex: '^{{ site_url }}'
+      state: absent
+    when: 
+      - sites_available.stat.exists == True
+      - php_available.stat.exists == True
+      - username.stdout != ""

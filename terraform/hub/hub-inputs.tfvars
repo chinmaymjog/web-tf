@@ -1,0 +1,15 @@
+project          = "star"
+p_short          = "str"
+env              = "hub"
+e_short          = "hub"
+location         = "centralindia"
+l_short          = "inc"
+vnet_space       = ["10.0.0.0/24"]
+snet_web         = ["10.0.0.0/26"]
+bastion_size     = "Standard_B2s"
+bastion_osdisk   = 64
+bastion_datadisk = 64
+vm_user          = "azureuser"
+ip_allow         = ["152.58.16.123"]
+netapp_sku       = "Standard"
+netapp_pool_size = 1

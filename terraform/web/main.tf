@@ -371,13 +371,13 @@ resource "azurerm_mysql_flexible_server" "mysql" {
 
 ### Key Vault DB secret
 resource "azurerm_key_vault_secret" "dbadmin" {
-  name         = "dbadmin"
+  name         = "${var.e_short}-dbadmin"
   value        = local.dbadminuser
   key_vault_id = var.key_vault_id
 }
 
 resource "azurerm_key_vault_secret" "dbpass" {
-  name         = "dbpass"
+  name         = "${var.e_short}-dbpass"
   value        = random_password.dbadminpassword.result
   key_vault_id = var.key_vault_id
 }

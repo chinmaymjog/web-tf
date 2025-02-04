@@ -303,7 +303,7 @@ resource "azurerm_key_vault" "kv" {
     ]
 
     secret_permissions = [
-      "Get", "List", "Set", "Delete", "Recover", "Backup", "Restore",
+      "Get", "List", "Set", "Delete", "Recover", "Backup", "Restore", "Purge",
     ]
 
     key_permissions = [

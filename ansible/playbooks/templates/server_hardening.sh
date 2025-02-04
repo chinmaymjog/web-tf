@@ -1,29 +1,36 @@
 #!/bin/bash
+
+set -e  # Exit on error
+
 ## Provisioner log file
 logfile=/var/log/provisioner.log
-## Function to echo action with time stamp
+
+## Function to echo action with timestamp
 log() {
-    echo "$(date +'%X %x') $1" | sudo tee -a $logfile
+    echo "$(date +'%Y-%m-%d %H:%M:%S') $1" | sudo tee -a "$logfile"
 }
 
 log "Updating Operating System"
-sudo apt-get update
-sleep 15
-log "Installing basic packages for smooth system functioning"
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq bash-completion fail2ban
+sudo apt-get update -qq
+touch /var/run/reboot-required
 
-log "System hardening"
+log "Installing basic packages for smooth system functioning"
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq bash-completion fail2ban lvm2 nfs-common
+
+log "Add time stamp to history"
 echo 'export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "' | sudo tee -a /root/.bashrc
-echo "
+
+cat <<EOF | sudo tee /etc/mybanner
 ########################################################################
 # Authorized access only!
 # If you are not authorized to access or use this system, disconnect now!
 ########################################################################
-"| sudo tee /etc/mybanner
+EOF
 
 log "Securing SSH"
-sudo mv /etc/ssh/sshd_config /etc/ssh/sshd_config_org
-echo "AuthorizedKeysFile .ssh/authorized_keys
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+cat <<EOF | sudo tee /etc/ssh/sshd_config
+AuthorizedKeysFile .ssh/authorized_keys
 Protocol 2
 Banner /etc/mybanner
 PermitRootLogin no
@@ -36,26 +43,29 @@ AllowUsers azureuser
 X11Forwarding no
 Subsystem sftp /usr/lib/openssh/sftp-server
 UsePAM yes
-" | sudo tee /etc/ssh/sshd_config
+EOF
 
-sudo systemctl reload sshd.service
+sudo systemctl reload ssh.service
 
-log "Enableing firewall & allow SSH, HTTP, HTTPS services"
-echo "y" | sudo ufw enable
-sudo ufw allow 22
-sudo ufw allow 80
-sudo ufw allow 443
+log "Enabling firewall & allowing SSH, HTTP, HTTPS services"
+sudo ufw --force enable
+sudo ufw allow 22/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
 
-log "Enableing fail2ban & configure it to protect SSH against DDOS"
-sudo systemctl enable fail2ban.service
+log "Enabling and configuring fail2ban to protect SSH against DDoS"
+sudo systemctl enable --now fail2ban.service
 
-echo "[sshd]
+cat <<EOF | sudo tee /etc/fail2ban/jail.local
+[sshd]
 enabled = true
 filter = sshd
 bantime = 30m
 findtime = 30m
 maxretry = 5
-" | sudo tee /etc/fail2ban/jail.local
+EOF
 
 log "Restarting fail2ban"
 sudo systemctl restart fail2ban.service
+
+log "Provisioning completed successfully."

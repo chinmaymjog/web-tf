@@ -15,15 +15,9 @@ sudo apt-get update -qq
 touch /var/run/reboot-required
 
 log "Installing basic packages for smooth system functioning"
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq bash-completion fail2ban lvm2
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq bash-completion fail2ban lvm2 nfs-common
 
-log "Installing Docker"
-curl -fsSL https://get.docker.com | sudo bash
-
-log "Enabling Docker"
-sudo systemctl enable --now docker.service
-
-log "System hardening"
+log "Add time stamp to history"
 echo 'export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "' | sudo tee -a /root/.bashrc
 
 cat <<EOF | sudo tee /etc/mybanner
@@ -58,7 +52,6 @@ sudo ufw --force enable
 sudo ufw allow 22/tcp
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
-sudo ufw allow 8080/tcp
 
 log "Enabling and configuring fail2ban to protect SSH against DDoS"
 sudo systemctl enable --now fail2ban.service

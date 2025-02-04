@@ -3,40 +3,9 @@
   become: true
   hosts: all
   tasks:
-  - name: Installing LVM package
-    apt: 
-      name: lvm2
-      state: present
+  - name: Create LVM on datadisk
+    ansible.builtin.script: templates/datadisk_lvm.sh
 
-  - name: Creating Volume group
-    lvg:
-      vg: data-vg
-      pvs: /dev/sdc
-
-  - name: Creating Logical Volume
-    lvol:
-      vg: data-vg
-      lv: data-lv
-      size: 100%FREE
-      shrink: false
-
-  - name: Creating filesystem on logical Volume
-    filesystem:
-      fstype: ext4
-      dev: /dev/data-vg/data-lv
-
-  - name: Creating mount directory
-    file:
-      path: /websites
-      state: directory
-
-  - name: Mount logical volume to directory
-    mount: 
-      fstype: ext4
-      path: /websites
-      src: /dev/data-vg/data-lv
-      state: mounted
-      
   - name: Running Server Hardening
     ansible.builtin.script: templates/server_hardening.sh
   

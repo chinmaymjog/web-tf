@@ -20,12 +20,12 @@ In addition to these requirements, I focused on:
 I want to share my journey with the tech community. Through a series of posts, I’ll walk you through each phase of the project.
 
 ### Topics Covered
-- Shared Hosting Platform Architecture
-- Terraform – Deploying Azure Infrastructure
-- Set up basition host
-- Ansible – Configuring Web and Database Servers
-- Jenkins – Admin Portal for Management
-- GitLab CI/CD – Automating Deployments
-- ELK Stack – Monitoring and Logging
+- [Shared Hosting Platform Architecture](./docs/Part_1.md)
+- [Terraform – Deploying Azure Infrastructure](./docs/Part_2.md)
+- [Bash Scripts - Server Preparation](./docs/Part_3.md)
+- [Ansible – Configuring Web and Database Servers](./docs/Part_4.md)
+- [Jenkins – Admin Portal for Management](./docs/Part_5.md)
+- [GitLab CI/CD – Automating Deployments](./docs/Part_6.md)
+- [ELK Stack – Monitoring and Logging](./docs/Part_7.md)
 
 Stay tuned for detailed guides and insights! 🚀

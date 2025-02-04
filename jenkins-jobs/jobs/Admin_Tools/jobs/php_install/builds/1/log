@@ -1,9 +1,0 @@
-Started by user [8mha:////4AaLTPvsSlus8agwzA8REbkPHt6pe+gFNQjHhXi0JLw4AAAAmR+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzuEgZe/dLi1CL95IzMvNzESgC1+YY6wgAAAA==[0mChinmay Jog
-Running as SYSTEM
-[EnvInject] - Loading node environment variables.
-Building in workspace /var/lib/jenkins/workspace/Admin_Tools/php_install
-[php_install] $ /bin/sh -xe /tmp/jenkins1511044526143258248.sh
-+ ansible-playbook --extra-vars php_version=php8.3 /home/c4eadmin/ansible/playbooks/install_php.yml
-ERROR! the playbook: /home/c4eadmin/ansible/playbooks/install_php.yml could not be found
-Build step 'Execute shell' marked build as failure
-Finished: FAILURE

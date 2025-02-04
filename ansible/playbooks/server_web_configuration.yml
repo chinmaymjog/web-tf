@@ -5,8 +5,7 @@
   tasks:
   - name: Update all packages
     ansible.builtin.apt:
-      name: "*"
-      state: latest
+      update_cache: yes
 
   - name: Install basic packages
     ansible.builtin.apt:
@@ -59,9 +58,9 @@
       groups: web_users
       append: true
 
-  - name: Setting GID on /websites directory
+  - name: Setting GID on /netappwebsites directory
     ansible.builtin.file:
-      path: /websites
+      path: /netappwebsites
       group: web_users
       mode: u=rwx,g=rwx,o=rx,g+s
       recurse: true

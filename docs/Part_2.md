@@ -1,6 +1,6 @@
 # Part 2: Terraform – Deploying Azure Infrastructure
 
-![Architecture](../images/terraform.png)
+![Architecture](./images/terraform.png)
 
 I will demonstrates the use of Terraform to deploy Azure Infrastructure for shared web hosting.
 

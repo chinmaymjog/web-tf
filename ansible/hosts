@@ -1,7 +1,7 @@
 [prod_webservers]
-web1 ansible_host=10.0.0.6
-web2 ansible_host=10.0.0.4
+web1 ansible_host=10.0.1.5
+web2 ansible_host=10.0.1.4
 
-[indus_webservers]
-web1 ansible_host=10.0.0.6
-web2 ansible_host=10.0.0.4
+[preprod_webservers]
+web1 ansible_host=10.0.2.5
+web2 ansible_host=10.0.2.4

@@ -13,7 +13,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>sudo ansible-playbook /data/ansibleansible/playbooks/server_web_configuration.yml</command>
+      <command>sudo ansible-playbook /data/ansible/playbooks/server_web_configuration.yml</command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>
   </builders>

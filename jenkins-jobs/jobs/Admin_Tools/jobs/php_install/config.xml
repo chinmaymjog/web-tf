@@ -23,7 +23,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>sudo ansible-playbook --extra-vars &quot;php_version=${phpversion}&quot; /data/ansibleansible/playbooks/php_install.yml</command>
+      <command>sudo ansible-playbook --extra-vars &quot;php_version=${phpversion}&quot; /data/ansible/playbooks/php_install.yml</command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>
   </builders>

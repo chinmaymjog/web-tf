@@ -48,7 +48,7 @@
     exit 1
 fi
 
-sudo ansible-playbook --extra-vars &quot;site_url=${site_url} env=${env}&quot; /data/ansibleansible/playbooks/http_auth_add.yml</command>
+sudo ansible-playbook --extra-vars &quot;site_url=${site_url} env=${env}&quot; /data/ansible/playbooks/http_auth_add.yml</command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>
   </builders>

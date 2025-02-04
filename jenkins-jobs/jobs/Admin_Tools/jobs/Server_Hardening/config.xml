@@ -14,7 +14,7 @@ Install necessary tools &amp; configure SSHD, Fail2ban for security</description
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>sudo ansible-playbook /data/ansibleansible/playbooks/server_hardening.yml</command>
+      <command>sudo ansible-playbook /data/ansible/playbooks/server_hardening.yml</command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>
   </builders>

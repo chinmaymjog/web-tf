@@ -104,13 +104,13 @@ fi
 # Handle HTML site deployment
 if [ &quot;${site_type}&quot; = &quot;html&quot; ]; then
 	echo Adding html site ${site_url} on ${env}
-    sudo ansible-playbook --extra-vars &quot;site_url=${site_url} env=${env}&quot; /data/ansibleansible/playbooks/html_site_add.yml
+    sudo ansible-playbook --extra-vars &quot;site_url=${site_url} env=${env}&quot; /data/ansible/playbooks/html_site_add.yml
 fi
 
 # Handle PHP site deployment
 if [ &quot;${site_type}&quot; = &quot;php&quot; ]; then
 	echo Adding php ${php_version} site ${site_url} on ${env}
-    sudo ansible-playbook --extra-vars &quot;site_url=${site_url} php_version=${php_version} env=${env}&quot; /data/ansibleansible/playbooks/php_site_add.yml
+    sudo ansible-playbook --extra-vars &quot;site_url=${site_url} php_version=${php_version} env=${env}&quot; /data/ansible/playbooks/php_site_add.yml
 fi</command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>

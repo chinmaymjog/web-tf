@@ -1,0 +1,37 @@
+Started by user [8mha:////4AaLTPvsSlus8agwzA8REbkPHt6pe+gFNQjHhXi0JLw4AAAAmR+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzuEgZe/dLi1CL95IzMvNzESgC1+YY6wgAAAA==[0mChinmay Jog
+Running as SYSTEM
+[EnvInject] - Loading node environment variables.
+Building in workspace /var/lib/jenkins/workspace/Admin_Tools/Configure_Web_Server
+[Configure_Web_Server] $ /bin/sh -xe /tmp/jenkins3387218326767935215.sh
++ sudo ansible-playbook /data/ansibleansible/playbooks/server_web_configuration.yml
+
+PLAY [Configure newly added webserver] *****************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host web1 is using the discovered Python
+interpreter at /usr/bin/python3.12, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+[WARNING]: Platform linux on host web2 is using the discovered Python
+interpreter at /usr/bin/python3.12, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [web1]
+ok: [web2]
+
+TASK [Update all packages] *****************************************************
+ok: [web1]
+ok: [web2]
+
+TASK [Install basic packages] **************************************************
+fatal: [web1]: FAILED! => {"cache_update_time": 1738134903, "cache_updated": false, "changed": false, "msg": "'/usr/bin/apt-get -y -o \"Dpkg::Options::=--force-confdef\" -o \"Dpkg::Options::=--force-confold\"       install 'zip=3.0-13ubuntu0.1' 'unzip=6.0-28ubuntu4.1' 'httpd'' failed: E: Package 'httpd' has no installation candidate\n", "rc": 100, "stderr": "E: Package 'httpd' has no installation candidate\n", "stderr_lines": ["E: Package 'httpd' has no installation candidate"], "stdout": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nPackage httpd is a virtual package provided by:\n  nginx 1.24.0-2ubuntu7.1\n  apache2 2.4.58-1ubuntu8.5\n  yaws 2.1.1+dfsg-2\n  webfs 1.21+ds1-12build3\n  tntnet 3.0-3.1build1\n  mini-httpd 1.30-8build2\n  micro-httpd 20140814-2.1\n  merecat 2.31+git20220513+ds-4.1build2\n  lighttpd 1.4.74-1ubuntu3\n\n", "stdout_lines": ["Reading package lists...", "Building dependency tree...", "Reading state information...", "Package httpd is a virtual package provided by:", "  nginx 1.24.0-2ubuntu7.1", "  apache2 2.4.58-1ubuntu8.5", "  yaws 2.1.1+dfsg-2", "  webfs 1.21+ds1-12build3", "  tntnet 3.0-3.1build1", "  mini-httpd 1.30-8build2", "  micro-httpd 20140814-2.1", "  merecat 2.31+git20220513+ds-4.1build2", "  lighttpd 1.4.74-1ubuntu3", ""]}
+fatal: [web2]: FAILED! => {"cache_update_time": 1738134903, "cache_updated": false, "changed": false, "msg": "'/usr/bin/apt-get -y -o \"Dpkg::Options::=--force-confdef\" -o \"Dpkg::Options::=--force-confold\"       install 'zip=3.0-13ubuntu0.1' 'unzip=6.0-28ubuntu4.1' 'httpd'' failed: E: Package 'httpd' has no installation candidate\n", "rc": 100, "stderr": "E: Package 'httpd' has no installation candidate\n", "stderr_lines": ["E: Package 'httpd' has no installation candidate"], "stdout": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nPackage httpd is a virtual package provided by:\n  nginx 1.24.0-2ubuntu7.1\n  apache2 2.4.58-1ubuntu8.5\n  yaws 2.1.1+dfsg-2\n  webfs 1.21+ds1-12build3\n  tntnet 3.0-3.1build1\n  mini-httpd 1.30-8build2\n  micro-httpd 20140814-2.1\n  merecat 2.31+git20220513+ds-4.1build2\n  lighttpd 1.4.74-1ubuntu3\n\n", "stdout_lines": ["Reading package lists...", "Building dependency tree...", "Reading state information...", "Package httpd is a virtual package provided by:", "  nginx 1.24.0-2ubuntu7.1", "  apache2 2.4.58-1ubuntu8.5", "  yaws 2.1.1+dfsg-2", "  webfs 1.21+ds1-12build3", "  tntnet 3.0-3.1build1", "  mini-httpd 1.30-8build2", "  micro-httpd 20140814-2.1", "  merecat 2.31+git20220513+ds-4.1build2", "  lighttpd 1.4.74-1ubuntu3", ""]}
+
+PLAY RECAP *********************************************************************
+web1                       : ok=2    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+web2                       : ok=2    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+
+Build step 'Execute shell' marked build as failure
+Finished: FAILURE

@@ -1,6 +1,9 @@
 
 **/.vscode
 jenkins-bkp.tar.gz
+Dockerfile
+docker-compose.yaml
+entrypoint.sh
 
 # Terraform directories and files
 **/.terraform/

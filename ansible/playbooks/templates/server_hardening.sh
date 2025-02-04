@@ -15,7 +15,7 @@ sudo apt-get update -qq
 touch /var/run/reboot-required
 
 log "Installing basic packages for smooth system functioning"
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq bash-completion fail2ban lvm2 nfs-common
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq bash-completion fail2ban lvm2 nfs-common zip
 
 log "Add time stamp to history"
 echo 'export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "' | sudo tee -a /root/.bashrc

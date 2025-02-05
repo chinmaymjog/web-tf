@@ -103,16 +103,6 @@ resource "azurerm_subnet_network_security_group_association" "nsg-web" {
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
-resource "azurerm_subnet_network_security_group_association" "nsg-db" {
-  subnet_id                 = azurerm_subnet.db.id
-  network_security_group_id = azurerm_network_security_group.nsg.id
-}
-
-resource "azurerm_subnet_network_security_group_association" "nsg-netapp" {
-  subnet_id                 = azurerm_subnet.netapp.id
-  network_security_group_id = azurerm_network_security_group.nsg.id
-}
-
 ### Load Balancer
 resource "azurerm_public_ip" "pip" {
   name                = "pip-${var.p_short}-${var.e_short}-${var.l_short}"

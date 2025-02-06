@@ -1,6 +1,7 @@
 # Part 2: Terraform – Deploying Azure Infrastructure
 
 ![Architecture](./images/net_diag.png)
+This README provides a structured, step-by-step guide for deploying Azure infrastructure using Terraform.
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -99,7 +100,25 @@ Apply the Terraform configuration:
 ```sh
 terraform apply -var-file hub-inputs.tfvars -state hub.tfstate
 ```
-To modify variables, update [`hub-inputs.tfvars`](../terraform/hub/hub-inputs.tfvars).
+Terraform will output below resource information which need to be used in next environment deployments. Save it somewhere.
+
+```sh
+Resource Group Name
+VENT Name
+VNET ID
+Front Door Name
+Production Endpoint ID
+Production Origin Group ID
+PreProduction Endpoint ID
+PreProduction Origin Group ID
+Netapp Account Name
+Netapp Pool Name
+Private DNS Zone Name
+Private DNS Zone ID
+Key Vault Name
+Key Vault ID
+VM IP
+```
 
 ### Deploying Web Resources
 Navigate to the Terraform directory:
@@ -107,6 +126,22 @@ Navigate to the Terraform directory:
 cd terraform/web
 ```
 #### Deploying Production Resources
+We need to update update [`prod-inputs.tfvars`](../terraform/web/prod-inputs.tfvars) with information gathered from hub output
+Update below variables
+
+```sh
+hub_rg_name => Resource Group Name
+hub_vnet_name => VENT Name
+hub_vnet_id => VNET ID
+endpoint_id => PreProduction Endpoint ID
+origin_group_id => PreProduction Origin Group ID 
+netapp_account_name => Netapp Account Name
+netapp_pool_name => Netapp Pool Name
+dns_zone_name => Private DNS Zone Name
+dns_zone_id => Private DNS Zone ID
+key_vault_id => Key Vault ID
+```
+
 Initialize Terraform:
 ```sh
 terraform init -var-file prod-inputs.tfvars
@@ -119,9 +154,30 @@ Apply the Terraform configuration:
 ```sh
 terraform apply -var-file prod-inputs.tfvars -state prod.tfstate
 ```
-To modify variables, update [`prod-inputs.tfvars`](../terraform/web/prod-inputs.tfvars).
 
+Terraform will output below resource information which need to be used in next step. Save it somewhere.
+```
+Resource Group Name
+MySQL server Name
+Load Balancer IP
+Web Server Private IPs
+```
 #### Deploying Preproduction Resources
+We need to update update [`preprod-inputs.tfvars`](../terraform/web/preprod-inputs.tfvars) with information gathered from hub output
+Update below variables
+```sh
+hub_rg_name => Resource Group Name
+hub_vnet_name => VENT Name
+hub_vnet_id => VNET ID
+endpoint_id => Production Endpoint ID
+origin_group_id => Production Origin Group ID 
+netapp_account_name => Netapp Account Name
+netapp_pool_name => Netapp Pool Name
+dns_zone_name => Private DNS Zone Name
+dns_zone_id => Private DNS Zone ID
+key_vault_id => Key Vault ID
+```
+
 Initialize Terraform:
 ```sh
 terraform init -var-file preprod-inputs.tfvars
@@ -134,7 +190,24 @@ Apply the Terraform configuration:
 ```sh
 terraform apply -var-file preprod-inputs.tfvars -state preprod.tfstate
 ```
-To modify variables, update [`preprod-inputs.tfvars`](../terraform/web/preprod-inputs.tfvars).
 
----
-This README provides a structured, step-by-step guide for deploying Azure infrastructure using Terraform. Let me know if further refinements are needed!
+Terraform will output below resource information which need to be used in next step. Save it somewhere.
+```sh
+Resource Group Name
+MySQL server Name
+Load Balancer IP
+Web Server Private IPs
+```
+
+## Customization
+To customize Azure resources or other variables you need to update
+
+hub - [`hub-inputs.tfvars`](../terraform/hub/hub-inputs.tfvars)
+Production - 
+[`prod-inputs.tfvars`](../terraform/web/prod-inputs.tfvars).
+
+Production - 
+[`preprod-inputs.tfvars`](../terraform/web/preprod-inputs.tfvars)
+
+Description for variables can be found in variable file in respective directory. 
+

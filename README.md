@@ -22,7 +22,7 @@ I want to share my journey with the tech community. Through a series of posts, I
 ### Topics Covered
 - [Shared Hosting Platform Architecture](./docs/Part_1.md)
 - [Terraform – Deploying Azure Infrastructure](./docs/Part_2.md)
-- [Bash Scripts - Server Preparation](./docs/Part_3.md)
+- [Bash Scripts - Server Preparation Guide for Web Hosting](./docs/Part_3.md)
 - [Ansible – Configuring Web and Database Servers](./docs/Part_4.md)
 - [Jenkins – Admin Portal for Management](./docs/Part_5.md)
 - [GitLab CI/CD – Automating Deployments](./docs/Part_6.md)

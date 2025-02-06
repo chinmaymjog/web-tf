@@ -2,8 +2,6 @@
 
 We’ll start by exploring the Azure infrastructure that forms the backbone of our hosting platform. I’ll explain the architectural design, the resources involved, and the key decisions made to ensure a secure and scalable environment.
 
-![Architecture](./images/net_diag.png)
-
 ## Architecture Overview
 This architecture is based on the **Hub-and-Spoke Model**.
 

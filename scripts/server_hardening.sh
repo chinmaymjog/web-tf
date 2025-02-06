@@ -12,7 +12,6 @@ log() {
 
 log "Updating Operating System"
 sudo apt-get update -qq
-touch /var/run/reboot-required
 
 log "Installing basic packages for smooth system functioning"
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq bash-completion fail2ban lvm2 nfs-common zip
